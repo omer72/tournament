@@ -12,7 +12,6 @@ import {
   ALL, PLAYER_LEVEL, ERROR_FETCHING, SEARCH, SHOW_LEVEL, TITLE,
 } from '../constants/app-constants';
 
-// eslint-disable-next-line react/function-component-definition
 export default function Tournament() {
   const [searchText, setSearchText] = useState('');
   const [firstPage, setFirstPage] = useState(true);
@@ -33,7 +32,7 @@ export default function Tournament() {
       playersValues.forEach((player) => {
         player.type = suspects.includes(player.id) ? 'suspect' : 'player';
       });
-      setPlayers(players);
+      setPlayers(playersValues);
     }
   }, [playersData, suspects]);
 
