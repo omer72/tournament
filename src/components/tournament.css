@@ -1,0 +1,19 @@
+.header{
+    width: 50%;
+    text-align: center;
+}
+.input-group{
+    width: 30%;
+    padding-bottom: 15px;
+}
+.tableHeader{
+    display:flex;
+    flex-direction: column;
+}
+.input#search.form-control:focus ~ button {
+    display:none;
+}
+
+.showLevel{
+    padding-right: 5px;
+}
