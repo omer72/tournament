@@ -18,6 +18,7 @@ export default function Tournament() {
   const [maxReach, setMaxReach] = useState(false);
   const [pageLength, setPageLength] = useState(10);
   const [pageNumber, setPageNumber] = useState(0);
+  const [maxInPage, setMaxInPage] = useState(0);
   const [players, setPlayers] = useState([]);
   const [selectedLevel, setSelectedLevel] = useState('none');
   const [totalResults, setTotalResults] = useState(0);
@@ -27,12 +28,26 @@ export default function Tournament() {
 
   useEffect(() => {
     if (playersData) {
-      setTotalResults(parseInt(playersData.headers['x-total'], 10));
-      const playersValues = playersData.data;
-      playersValues.forEach((player) => {
-        player.type = suspects.includes(player.id) ? 'suspect' : 'player';
-      });
-      setPlayers(playersValues);
+      const totalResultsValue = parseInt(playersData.headers['x-total'], 10);
+      setTotalResults(totalResultsValue);
+      // no result - >  0 - 0 of 0 , no next and previous
+      if (totalResultsValue === 0) {
+        setPageNumber(0);
+        setMaxInPage(0);
+        setPlayers([]);
+      } else if (totalResultsValue < pageNumber){
+        // The total result is lower than the next page
+        setPageNumber(totalResultsValue-pageLength);
+      } else {
+
+        const playersValues = playersData.data;
+        playersValues.forEach((player) => {
+          player.type = suspects.includes(player.id) ? 'suspect' : 'player';
+        });
+        setPlayers(playersValues);
+        ( totalResultsValue > (pageNumber + pageLength)) ? setMaxInPage(pageNumber + pageLength -1) : setMaxInPage(totalResultsValue -1);
+      }
+      ((pageNumber + pageLength) >= totalResultsValue) ? setMaxReach(true) : setMaxReach(false);
     }
   }, [playersData, suspects]);
 
@@ -43,9 +58,10 @@ export default function Tournament() {
   function goToNextPage() {
     setFirstPage(false);
     if (!maxReach) {
-      (pageNumber + (2 * pageLength) >= totalResults) ? setMaxReach(true) : setMaxReach(false);
+      (pageNumber +  pageLength >= totalResults) ? setMaxReach(true) : setMaxReach(false);
       getPlayers(pageNumber + pageLength);
       setPageNumber(pageNumber + pageLength);
+      ( totalResults > (pageNumber + 2 * pageLength)) ? setMaxInPage(pageNumber + 2 * pageLength -1 ) : setMaxInPage(totalResults -1);
     }
   }
 
@@ -149,6 +165,7 @@ export default function Tournament() {
               firstPage={firstPage}
               maxReach={maxReach}
               pageNumber={pageNumber}
+              maxInPage={maxInPage}
               pageLength={pageLength}
               goToFirstPage={() => getPlayers(0)}
               goToPreviousPage={goToPreviousPage}

@@ -37,7 +37,7 @@ export default function DataGrid(props) {
             {' '}
             -
             {' '}
-            {props.pageNumber + props.pageLength}
+            {props.maxInPage}
             {' '}
             of
             {' '}
@@ -59,17 +59,12 @@ export default function DataGrid(props) {
             {renderHeaders()}
           </tr>
         </thead>
+        <tbody>
         {props.isLoading
-          ? (
-            <tbody>
-              <tr><td colSpan={5} className="loading"><FetchingIndicator /></td></tr>
-            </tbody>
-          ) : (
-            <tbody>
-              {props.items.map(renderRow)}
-            </tbody>
-          )}
-
+          ? <tr><td colSpan={5} className="loading"><FetchingIndicator /></td></tr> :
+            (props.items === [])? <div> No values found </div>:<> {props.items.map(renderRow)}</>
+          }
+        </tbody>
       </Table>
       <div className="footer">
         <div>
